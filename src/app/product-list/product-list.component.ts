@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {IProduct} from './Product';
+import {filter} from 'rxjs/operators';
+import {ProductService} from './product.service';
 
 @Component({
   selector: 'app-product-list',
@@ -8,32 +11,45 @@ import { Component, OnInit } from '@angular/core';
 export class ProductListComponent implements OnInit {
 
   productList = 'Product List';
-  products: any = [
-    {
-      productId: 2,
-      productName: 'Garden Cart',
-      productCode: 'GDN-0023',
-      releaseDate: 'March 18, 2019',
-      description: 'description',
-      price: 150.00,
-      starRating: 4.2,
-      imageUrl: 'assest/image/garden-cart.png'
-    },
-    {
-      productId: 2,
-      productName: 'Garden Cart',
-      productCode: 'GDN-0023',
-      releaseDate: 'March 18, 2019',
-      description: 'description',
-      price: 150.00,
-      starRating: 4.2,
-      imageUrl: 'assest/image/garden-cart.png'
-    }
-    ];
+  imageWidth = 50 ;
+  imageMargin = 2;
+  showImage = false;
+  // tslint:disable-next-line:variable-name
+  _listfilter: string;
+  get listFilter(): string {
+    return this._listfilter;
+    /*this.filteredProducts = this.listFilter ? this.performFilter(this.listFilter) : this.products;*/
+  }
+  set listFilter(value: string) {
+    this._listfilter = value;
+    console.log(this._listfilter);
+    this.filteredProducts = this.listFilter ? this.performFilter(this.listFilter) : this.products;
+  }
+  filteredProducts: IProduct[];
+  products: IProduct[] ;
 
-  constructor() { }
+
+  performFilter(filterBy: string): IProduct[] {
+    filterBy = filterBy.toLocaleLowerCase();
+    return this.products.filter((product: IProduct) =>
+    product.productName.toLocaleLowerCase().indexOf(filterBy) !== -1);
+  }
+
+  // tslint:disable-next-line:align no-unused-expression
+  toggleImage(): void {
+    this.showImage = !this.showImage;
+  }
+
+  constructor(private productService: ProductService) {
+  }
 
   ngOnInit(): void {
+    this.products = this.productService.getProducts();
+    this.filteredProducts = this.products;
+  }
+
+  onRatingClicked(message: string): void {
+    this.productList = 'product list: ' + message;
   }
 
 }
