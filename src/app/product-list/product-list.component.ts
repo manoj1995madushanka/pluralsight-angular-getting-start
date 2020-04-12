@@ -9,13 +9,6 @@ import {ProductService} from './product.service';
   styleUrls: ['./product-list.component.css']
 })
 export class ProductListComponent implements OnInit {
-
-  productList = 'Product List';
-  imageWidth = 50 ;
-  imageMargin = 2;
-  showImage = false;
-  // tslint:disable-next-line:variable-name
-  _listfilter: string;
   get listFilter(): string {
     return this._listfilter;
     /*this.filteredProducts = this.listFilter ? this.performFilter(this.listFilter) : this.products;*/
@@ -25,8 +18,20 @@ export class ProductListComponent implements OnInit {
     console.log(this._listfilter);
     this.filteredProducts = this.listFilter ? this.performFilter(this.listFilter) : this.products;
   }
+
+  constructor(private productService: ProductService) {
+  }
+
+  productList = 'Product List';
+  imageWidth = 50 ;
+  imageMargin = 2;
+  showImage = false;
+  // tslint:disable-next-line:variable-name
+  _listfilter: string;
   filteredProducts: IProduct[];
   products: IProduct[] ;
+
+  errorMessage: string;
 
 
   performFilter(filterBy: string): IProduct[] {
@@ -39,13 +44,16 @@ export class ProductListComponent implements OnInit {
   toggleImage(): void {
     this.showImage = !this.showImage;
   }
-
-  constructor(private productService: ProductService) {
-  }
-
   ngOnInit(): void {
-    this.products = this.productService.getProducts();
-    this.filteredProducts = this.products;
+   /* this.products = this.productService.getProducts();*/
+    this.productService.getProductFromUrl().subscribe(
+      {
+        next: product => {
+          this.products = product
+          this.filteredProducts = this.products;
+        },
+        error: err => this.errorMessage = err
+      });
   }
 
   onRatingClicked(message: string): void {

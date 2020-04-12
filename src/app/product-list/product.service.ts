@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import {IProduct} from './Product';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {Observable, throwError} from 'rxjs';
+import {catchError, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
-  private productUrl = 'www.getJson.com';
+  private productUrl = 'http://localhost:4200/assets/data/product-list.json';
 
   constructor(private httpClient: HttpClient) { }
 
@@ -34,7 +36,21 @@ export class ProductService {
       }
     ];
   }
-  getProductFromUrl() {
-    return this.httpClient.get<IProduct[]>(this.productUrl);
+  getProductFromUrl(): Observable<IProduct[]> {
+    return this.httpClient.get<IProduct[]>(this.productUrl).pipe(
+      tap(data => console.log('All: ' + JSON.stringify(data))),
+      catchError(this.handleError)
+    );
+  }
+
+  private handleError(err: HttpErrorResponse) {
+    let errorMessage = '';
+    if (err.error instanceof ErrorEvent) {
+      errorMessage = 'An error occured: ' + (err.error.message);
+    } else {
+      errorMessage = 'Server returns ...';
+    }
+    console.log(errorMessage);
+    return throwError(errorMessage);
   }
 }
