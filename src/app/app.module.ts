@@ -11,6 +11,10 @@ import {ConvertToSpacesPipe} from './shared/convert-to-spaces.pipe';
 import { StarComponent } from './shared/star.component';
 import {ProductService} from './product-list/product.service';
 import {HttpClientModule} from '@angular/common/http';
+import { ProductDetailComponent } from './product-list/product-detail.component';
+import { WelcomeComponent } from './welcome/welcome.component';
+import {RouterModule} from '@angular/router';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +22,10 @@ import {HttpClientModule} from '@angular/common/http';
     TestComponent,
     ProductListComponent,
     StarComponent,
-    ConvertToSpacesPipe
+    ConvertToSpacesPipe,
+    ProductDetailComponent,
+    WelcomeComponent,
+    PageNotFoundComponent
   ],
   imports: [
     BrowserModule,
